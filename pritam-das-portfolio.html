@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pritam Das — Video Editor & Cinematographer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --off-black: #111111;
+    --panel: #161616;
+    --border: #2a2a2a;
+    --dim: #3a3a3a;
+    --muted: #888;
+    --silver: #c0c0c0;
+    --white: #f0ede6;
+    --accent: #e8c84a;
+    --accent2: #e05c2c;
+    --red-line: #c0392b;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.6;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 3rem;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.5rem 1.2rem;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .nav-cta:hover { background: var(--accent); color: var(--black); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 8rem 3rem 5rem;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 1rem;
+  }
+  .hero-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 10vw, 9rem);
+    line-height: 0.9;
+    color: var(--white);
+    letter-spacing: 0.02em;
+    margin-bottom: 1.5rem;
+  }
+  .hero-name span { color: var(--accent); }
+  .hero-tagline {
+    font-size: 1rem;
+    color: var(--silver);
+    max-width: 380px;
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+    line-height: 1.8;
+  }
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 3rem;
+  }
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--dim);
+    color: var(--muted);
+  }
+  .tag.hot {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(232,200,74,0.06);
+  }
+  .hero-ctas { display: flex; gap: 1rem; align-items: center; }
+  .btn-primary {
+    display: inline-block;
+    padding: 0.85rem 2rem;
+    background: var(--accent);
+    color: var(--black);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { background: var(--accent2); color: var(--white); }
+  .btn-ghost {
+    display: inline-block;
+    padding: 0.85rem 2rem;
+    border: 1px solid var(--dim);
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--white); color: var(--white); }
+
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+  }
+  .hero-visual {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #1a1205 0%, #0f0f0f 60%);
+  }
+  .hero-film-strip {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 0;
+    width: 60px;
+    background: var(--off-black);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow: hidden;
+  }
+  .film-hole {
+    width: 32px;
+    height: 24px;
+    background: var(--black);
+    border-radius: 3px;
+    margin: 6px auto;
+    flex-shrink: 0;
+  }
+  .hero-stat-grid {
+    position: absolute;
+    bottom: 3rem;
+    left: 4rem;
+    right: 2rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .hero-stat {
+    background: rgba(10,10,10,0.9);
+    padding: 1.2rem;
+    text-align: center;
+  }
+  .hero-stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    color: var(--accent);
+    line-height: 1;
+    display: block;
+  }
+  .hero-stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-top: 0.3rem;
+  }
+  .hero-tape {
+    position: absolute;
+    top: 50%;
+    left: 60px;
+    right: 0;
+    transform: translateY(-50%);
+    height: 320px;
+    background: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 38px,
+        rgba(42,42,42,0.4) 38px,
+        rgba(42,42,42,0.4) 40px
+      ),
+      linear-gradient(90deg, rgba(30,20,5,0.8), rgba(15,15,15,0.3));
+    border-top: 1px solid var(--dim);
+    border-bottom: 1px solid var(--dim);
+    display: flex;
+    align-items: center;
+  }
+  .tape-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 6rem;
+    color: rgba(232,200,74,0.06);
+    white-space: nowrap;
+    letter-spacing: 0.1em;
+    padding-left: 2rem;
+    user-select: none;
+  }
+  .divider-line {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), transparent);
+  }
+
+  /* SECTIONS */
+  section { padding: 6rem 3rem; }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 0.05em;
+    color: var(--white);
+  }
+  .section-rule {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ABOUT */
+  #about {
+    background: var(--off-black);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+  .about-bio {
+    font-size: 1.05rem;
+    color: var(--silver);
+    line-height: 1.9;
+  }
+  .about-bio p + p { margin-top: 1rem; }
+  .about-bio strong { color: var(--accent); font-weight: 500; }
+  .about-sidebar {}
+  .contact-block {
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .contact-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 0.4rem;
+  }
+  .contact-val {
+    font-size: 0.9rem;
+    color: var(--silver);
+  }
+  .contact-val a { color: var(--silver); text-decoration: none; }
+  .contact-val a:hover { color: var(--accent); }
+  .pipeline-block {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+  }
+  .pipeline-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  .pipeline-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .pipeline-step {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .pipeline-step:last-child { border-bottom: none; }
+  .step-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+  .step-dot.dim { background: var(--dim); }
+  .step-name { font-size: 0.85rem; color: var(--silver); }
+
+  /* SKILLS */
+  #skills { background: var(--black); }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .skill-card {
+    background: var(--off-black);
+    padding: 2rem;
+    position: relative;
+  }
+  .skill-icon {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .skill-card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    color: var(--white);
+  }
+  .skill-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .skill-list li {
+    font-size: 0.82rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .skill-list li::before {
+    content: '—';
+    color: var(--dim);
+    font-size: 0.65rem;
+  }
+
+  /* EXPERIENCE */
+  #experience {
+    background: var(--off-black);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .exp-list { display: flex; flex-direction: column; gap: 0; }
+  .exp-item {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 3rem;
+    padding: 2.5rem 0;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .exp-item:last-child { border-bottom: none; }
+  .exp-meta {}
+  .exp-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .exp-org {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .exp-right {}
+  .exp-role {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.04em;
+    color: var(--white);
+    margin-bottom: 0.8rem;
+  }
+  .exp-desc {
+    font-size: 0.9rem;
+    color: var(--silver);
+    line-height: 1.8;
+  }
+  .exp-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+    background: rgba(232,200,74,0.08);
+    border: 1px solid rgba(232,200,74,0.25);
+    color: var(--accent);
+  }
+  .badge.red {
+    background: rgba(224,92,44,0.08);
+    border-color: rgba(224,92,44,0.25);
+    color: var(--accent2);
+  }
+
+  /* PROJECTS */
+  #projects { background: var(--black); }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .project-card {
+    background: var(--off-black);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+    transform-origin: left;
+  }
+  .project-card:hover { background: var(--panel); }
+  .project-card:hover::before { transform: scaleX(1); }
+  .project-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    color: var(--dim);
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    line-height: 1;
+    user-select: none;
+  }
+  .project-type {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 1rem;
+  }
+  .project-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.03em;
+    color: var(--white);
+    margin-bottom: 0.8rem;
+    line-height: 1.2;
+    padding-right: 2.5rem;
+  }
+  .project-desc {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 1.2rem;
+  }
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .ptag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--dim);
+    border: 1px solid var(--dim);
+    padding: 0.15rem 0.5rem;
+  }
+
+  /* EDUCATION & CERTS */
+  #education { background: var(--off-black); border-top: 1px solid var(--border); }
+  .edu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .edu-card {
+    background: var(--off-black);
+    padding: 2rem;
+  }
+  .edu-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .edu-degree {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.03em;
+    color: var(--white);
+    margin-bottom: 0.3rem;
+  }
+  .edu-school { font-size: 0.85rem; color: var(--silver); margin-bottom: 0.2rem; }
+  .edu-year { font-size: 0.78rem; color: var(--muted); }
+
+  /* POWER NUMBERS */
+  #power {
+    background: var(--black);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .power-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .power-card {
+    background: var(--off-black);
+    padding: 2rem;
+    text-align: center;
+  }
+  .power-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    color: var(--accent);
+    line-height: 1;
+    display: block;
+  }
+  .power-desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.5rem;
+    display: block;
+  }
+
+  /* FOOTER / CONTACT */
+  footer {
+    background: var(--off-black);
+    border-top: 1px solid var(--border);
+    padding: 5rem 3rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+  .footer-left {}
+  .footer-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    color: var(--white);
+    letter-spacing: 0.03em;
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+  .footer-title span { color: var(--accent); }
+  .footer-sub {
+    font-size: 0.9rem;
+    color: var(--muted);
+    max-width: 380px;
+    line-height: 1.8;
+  }
+  .footer-right {}
+  .contact-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 2rem;
+  }
+  .contact-item {
+    display: flex;
+    gap: 1.5rem;
+    align-items: baseline;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .ci-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    width: 80px;
+    flex-shrink: 0;
+  }
+  .ci-val { font-size: 0.9rem; color: var(--silver); }
+  .ci-val a { color: var(--silver); text-decoration: none; }
+  .ci-val a:hover { color: var(--accent); }
+  .footer-bottom {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-copy {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .footer-role {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    color: var(--accent2);
+    text-transform: uppercase;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero-left > * {
+    animation: fadeUp 0.7s ease both;
+  }
+  .hero-left > *:nth-child(1) { animation-delay: 0.1s; }
+  .hero-left > *:nth-child(2) { animation-delay: 0.2s; }
+  .hero-left > *:nth-child(3) { animation-delay: 0.3s; }
+  .hero-left > *:nth-child(4) { animation-delay: 0.4s; }
+  .hero-left > *:nth-child(5) { animation-delay: 0.5s; }
+
+  @keyframes scroll-tape {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  .tape-inner {
+    display: flex;
+    animation: scroll-tape 18s linear infinite;
+    white-space: nowrap;
+  }
+
+  /* RED RECORDING DOT */
+  .rec-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .rec-dot::before {
+    content: '';
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent2);
+    animation: blink 1.2s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  /* SCROLL INDICATOR */
+  .scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    z-index: 2;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    animation: scrollLine 1.5s ease-in-out infinite;
+  }
+  @keyframes scrollLine {
+    0% { opacity: 0; transform: scaleY(0); transform-origin: top; }
+    50% { opacity: 1; transform: scaleY(1); }
+    100% { opacity: 0; transform: scaleY(0); transform-origin: bottom; }
+  }
+  .scroll-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    color: var(--dim);
+    text-transform: uppercase;
+    writing-mode: vertical-lr;
+  }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { height: 250px; order: -1; }
+    .hero-left { padding: 6rem 1.5rem 4rem; }
+    section { padding: 4rem 1.5rem; }
+    .about-grid, .footer { grid-template-columns: 1fr; gap: 2rem; }
+    .skills-grid, .projects-grid { grid-template-columns: 1fr; }
+    .power-grid { grid-template-columns: repeat(2, 1fr); }
+    .edu-grid { grid-template-columns: 1fr; }
+    .exp-item { grid-template-columns: 1fr; gap: 0.5rem; }
+    footer { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">PD</div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#experience">Work</a>
+    <a href="#projects">Projects</a>
+    <a href="#education">Education</a>
+  </div>
+  <a href="https://drive.google.com/drive/folders/1OTuTuoeXY2HCXnUUQMVd9dGZptFUZxlm" target="_blank" class="nav-cta">View Portfolio ↗</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-left">
+    <div class="rec-dot">Available for hire</div>
+    <div class="hero-eyebrow">Video Editor & Cinematographer</div>
+    <h1 class="hero-name">PRITAM<br><span>DAS</span></h1>
+    <p class="hero-tagline">3+ years of professional media production — from government promotional films to live NSS broadcasts. I handle the full pipeline: concept to upload.</p>
+    <div class="hero-tags">
+      <span class="tag hot">Video Editing</span>
+      <span class="tag hot">Live Streaming</span>
+      <span class="tag hot">Cinematography</span>
+      <span class="tag">DaVinci Resolve</span>
+      <span class="tag">Adobe Premiere Pro</span>
+      <span class="tag">Color Grading</span>
+      <span class="tag">Reels Editor</span>
+      <span class="tag">OBS Studio</span>
+    </div>
+    <div class="hero-ctas">
+      <a href="https://drive.google.com/drive/folders/1OTuTuoeXY2HCXnUUQMVd9dGZptFUZxlm" target="_blank" class="btn-primary">View Portfolio</a>
+      <a href="mailto:pritamdas743373@gmail.com" class="btn-ghost">Hire Me</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-visual"></div>
+    <div class="hero-film-strip">
+      <!-- Film holes repeated -->
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+      <div class="film-hole"></div><div class="film-hole"></div><div class="film-hole"></div>
+    </div>
+    <div class="hero-tape">
+      <div class="tape-inner">
+        <div class="tape-text">GANGASAGAR · NIC 2026 · NSS PRE-RDC · TNU · PRITIX · LIVE · COLOR · CUT · </div>
+        <div class="tape-text">GANGASAGAR · NIC 2026 · NSS PRE-RDC · TNU · PRITIX · LIVE · COLOR · CUT · </div>
+      </div>
+    </div>
+    <div class="hero-stat-grid">
+      <div class="hero-stat">
+        <span class="hero-stat-num">100+</span>
+        <span class="hero-stat-label">Videos Edited</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">15+</span>
+        <span class="hero-stat-label">Clients Served</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">3+</span>
+        <span class="hero-stat-label">Years Experience</span>
+      </div>
+    </div>
+    <div class="divider-line"></div>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <div class="scroll-text">Scroll</div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2 class="section-title">About Me</h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-bio">
+      <p>I'm <strong>Pritam Das</strong>, a media professional from Diamond Harbour, West Bengal — with over <strong>3 years of hands-on experience</strong> in video production, cinematography, and live event broadcasting.</p>
+      <p>I've worked directly with the <strong>West Bengal NSS Directorate</strong> and state government bodies as an official Media Lead — handling high-stakes coverage for NSS Pre-RDC 2025 and NIC 2026 camps. I've produced government podcast episodes, promotional reels, and multi-cam event documentaries that have driven real digital engagement.</p>
+      <p>What sets me apart: I own the <strong>full pipeline</strong> — from scriptwriting and field shooting, through color grading in DaVinci Resolve, to live switching and final upload. No dependency on a team for the essentials.</p>
+      <p>Through my own venture, <strong>Pritix Photography</strong>, I've served 10+ wedding clients and corporate departments — sharpening my ability to deliver under pressure with a 24–48 hour turnaround on event recaps.</p>
+    </div>
+    <div class="about-sidebar">
+      <div class="contact-block">
+        <div class="contact-label">Location</div>
+        <div class="contact-val">Diamond Harbour, West Bengal, India</div>
+      </div>
+      <div class="contact-block">
+        <div class="contact-label">Phone</div>
+        <div class="contact-val"><a href="tel:8159955605">+91 81599 55605</a></div>
+      </div>
+      <div class="contact-block">
+        <div class="contact-label">Email</div>
+        <div class="contact-val"><a href="mailto:pritamdas743373@gmail.com">pritamdas743373@gmail.com</a></div>
+      </div>
+      <div class="contact-block">
+        <div class="contact-label">Portfolio Drive</div>
+        <div class="contact-val"><a href="https://drive.google.com/drive/folders/1OTuTuoeXY2HCXnUUQMVd9dGZptFUZxlm" target="_blank">Google Drive ↗</a></div>
+      </div>
+      <div class="pipeline-block">
+        <div class="pipeline-title">Full Pipeline Capability</div>
+        <div class="pipeline-steps">
+          <div class="pipeline-step"><div class="step-dot"></div><div class="step-name">Scriptwriting & Pre-production</div></div>
+          <div class="pipeline-step"><div class="step-dot"></div><div class="step-name">Field Shooting & Cinematography</div></div>
+          <div class="pipeline-step"><div class="step-dot"></div><div class="step-name">Multi-cam Editing</div></div>
+          <div class="pipeline-step"><div class="step-dot"></div><div class="step-name">Color Grading (DaVinci)</div></div>
+          <div class="pipeline-step"><div class="step-dot"></div><div class="step-name">Sound Design</div></div>
+          <div class="pipeline-step"><div class="step-dot"></div><div class="step-name">Live Switching & Broadcast</div></div>
+          <div class="pipeline-step"><div class="step-dot"></div><div class="step-name">Final Export & Upload</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2 class="section-title">Skills & Tools</h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-card">
+      <div class="skill-icon">// Software</div>
+      <div class="skill-card-title">Editing Suite</div>
+      <ul class="skill-list">
+        <li>Adobe Premiere Pro</li>
+        <li>DaVinci Resolve</li>
+        <li>Adobe Photoshop</li>
+        <li>Canva</li>
+        <li>OBS Studio</li>
+      </ul>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">// Post-Production</div>
+      <div class="skill-card-title">Editing Craft</div>
+      <ul class="skill-list">
+        <li>Color Correction & Grading</li>
+        <li>Multi-cam Editing</li>
+        <li>Sound Design & Mixing</li>
+        <li>Storytelling & Narrative</li>
+        <li>Reels & Short-form Editing</li>
+      </ul>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">// Live Production</div>
+      <div class="skill-card-title">Broadcast & Stream</div>
+      <ul class="skill-list">
+        <li>Live Stream Management</li>
+        <li>Real-time Switching</li>
+        <li>OBS Configuration</li>
+        <li>Event Documentation</li>
+        <li>Digital Documentation</li>
+      </ul>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">// Camera</div>
+      <div class="skill-card-title">Cinematography</div>
+      <ul class="skill-list">
+        <li>Event & Documentary Shooting</li>
+        <li>Wedding & Commercial Photography</li>
+        <li>Solo Field Operation</li>
+        <li>Lighting & Composition</li>
+        <li>Government & Institutional Media</li>
+      </ul>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">// Content</div>
+      <div class="skill-card-title">Social Media</div>
+      <ul class="skill-list">
+        <li>Instagram Reels Creation</li>
+        <li>YouTube Video Editing</li>
+        <li>Social Media Content Strategy</li>
+        <li>Engagement-Driven Editing</li>
+        <li>24–48 Hr Turnaround</li>
+      </ul>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">// Management</div>
+      <div class="skill-card-title">Leadership</div>
+      <ul class="skill-list">
+        <li>Team Coordination</li>
+        <li>Freelance Project Lead</li>
+        <li>Deadline-driven Delivery</li>
+        <li>Client Communication</li>
+        <li>Full Pipeline Management</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2 class="section-title">Experience</h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="exp-list">
+
+    <div class="exp-item">
+      <div class="exp-meta">
+        <div class="exp-date">2024 – Present</div>
+        <div class="exp-org">West Bengal NSS Directorate<br>& State Government<br>The Neotia University</div>
+      </div>
+      <div class="exp-right">
+        <div class="exp-role">Official Media Lead & Cinematographer</div>
+        <div class="exp-desc">Served as the primary media person for NSS Pre-RDC 2025 and NIC Camp 2026 in West Bengal — two of the most high-profile national-level student events. Produced event recaps, government podcasts, and promotional reels. Successfully managed live broadcasts for University FDPs and increased digital engagement for NSS West Bengal through quality video content.</div>
+        <div class="exp-badges">
+          <span class="badge">NSS Pre-RDC 2025</span>
+          <span class="badge">NIC Camp 2026</span>
+          <span class="badge">Gangasagar Mela 2026</span>
+          <span class="badge red">Live Broadcast</span>
+          <span class="badge red">Government Client</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-meta">
+        <div class="exp-date">2022 – Present</div>
+        <div class="exp-org">Pritix Photography<br>Diamond Harbour, WB</div>
+      </div>
+      <div class="exp-right">
+        <div class="exp-role">Founder & Lead Photographer / Editor</div>
+        <div class="exp-desc">Founded and operate Pritix Photography, delivering end-to-end media services for weddings, corporate clients, and university departments. Handled 10+ weddings, commercial product shoots, and institutional video projects. Built a direct client base through Instagram, Facebook, and word-of-mouth referrals.</div>
+        <div class="exp-badges">
+          <span class="badge">10+ Weddings</span>
+          <span class="badge">Corporate Clients</span>
+          <span class="badge red">Freelance Lead</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-meta">
+        <div class="exp-date">2023 – Present</div>
+        <div class="exp-org">The Neotia University<br>Sarisha, WB</div>
+      </div>
+      <div class="exp-right">
+        <div class="exp-role">University Media & Content Creator</div>
+        <div class="exp-desc">Produced professional corporate interviews, faculty development program recordings, and promotional content for The Neotia University. Operated as a solo field unit — camera, audio, and editing — for institutional video deliverables with rapid turnaround requirements.</div>
+        <div class="exp-badges">
+          <span class="badge">Corporate Interview</span>
+          <span class="badge">FDP Recording</span>
+          <span class="badge red">Institutional Media</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2 class="section-title">Key Projects</h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="projects-grid">
+    <div class="project-card">
+      <span class="project-num">01</span>
+      <div class="project-type">Official Documentation</div>
+      <div class="project-name">Gangasagar Mela 2026</div>
+      <div class="project-desc">Full-scale official documentation of one of India's largest religious gatherings — Gangasagar Mela 2026. Delivered under extreme deadline pressure with high-stakes government visibility. Proved ability to shoot and edit in chaotic, large-crowd environments.</div>
+      <div class="project-tags">
+        <span class="ptag">Government</span>
+        <span class="ptag">Documentary</span>
+        <span class="ptag">Deadline</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <span class="project-num">02</span>
+      <div class="project-type">Promotional Campaign</div>
+      <div class="project-name">West Bengal NIC Camp 2026</div>
+      <div class="project-desc">Created the full promotional video campaign for the West Bengal NSS National Integration Camp 2026. Included event recaps, social media reels, and highlight films distributed across NSS's official digital channels — driving measurable engagement uplift.</div>
+      <div class="project-tags">
+        <span class="ptag">NSS</span>
+        <span class="ptag">Campaign</span>
+        <span class="ptag">Social Media</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <span class="project-num">03</span>
+      <div class="project-type">Corporate Interview</div>
+      <div class="project-name">TNU Professional Interview Series</div>
+      <div class="project-desc">Produced and edited a professional corporate interview series for The Neotia University — including pre-production planning, studio lighting setup, multi-angle capture, and polished post-production with motion graphics and color grading.</div>
+      <div class="project-tags">
+        <span class="ptag">Corporate</span>
+        <span class="ptag">Color Grade</span>
+        <span class="ptag">TNU</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POWER NUMBERS -->
+<section id="power">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2 class="section-title">By The Numbers</h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="power-grid">
+    <div class="power-card">
+      <span class="power-num">100+</span>
+      <span class="power-desc">Videos Edited<br>(Reels, Docs, Interviews)</span>
+    </div>
+    <div class="power-card">
+      <span class="power-num">15+</span>
+      <span class="power-desc">Clients<br>(Incl. Govt. Bodies)</span>
+    </div>
+    <div class="power-card">
+      <span class="power-num">48h</span>
+      <span class="power-desc">Avg. Event Recap<br>Turnaround Time</span>
+    </div>
+    <div class="power-card">
+      <span class="power-num">3+</span>
+      <span class="power-desc">Years of Professional<br>Media Experience</span>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION & CERTS -->
+<section id="education">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2 class="section-title">Education & Certifications</h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="edu-grid">
+    <div class="edu-card">
+      <div class="edu-label">Degree</div>
+      <div class="edu-degree">Bachelor of Pharmacy (B.Pharm)</div>
+      <div class="edu-school">The Neotia University (TNU), Sarisha, WB</div>
+      <div class="edu-year">Final Year — 2026</div>
+    </div>
+    <div class="edu-card">
+      <div class="edu-label">Certification</div>
+      <div class="edu-degree">NSS Official Media Certification</div>
+      <div class="edu-school">National Service Scheme, West Bengal</div>
+      <div class="edu-year">Awarded for service as Official Photographer & Cinematographer at NSS Pre-RDC 2025 and NIC Camp 2026</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="footer-left">
+    <div class="footer-title">Let's<br>Work<br><span>Together.</span></div>
+    <p class="footer-sub">Looking for a video editor, cinematographer, or live stream operator who already knows how government and institutional media works? You've found him.</p>
+  </div>
+  <div class="footer-right">
+    <div class="contact-row">
+      <div class="contact-item">
+        <span class="ci-label">Phone</span>
+        <span class="ci-val"><a href="tel:8159955605">+91 81599 55605</a></span>
+      </div>
+      <div class="contact-item">
+        <span class="ci-label">Email</span>
+        <span class="ci-val"><a href="mailto:pritamdas743373@gmail.com">pritamdas743373@gmail.com</a></span>
+      </div>
+      <div class="contact-item">
+        <span class="ci-label">Location</span>
+        <span class="ci-val">Diamond Harbour, West Bengal</span>
+      </div>
+      <div class="contact-item">
+        <span class="ci-label">Portfolio</span>
+        <span class="ci-val"><a href="https://drive.google.com/drive/folders/1OTuTuoeXY2HCXnUUQMVd9dGZptFUZxlm" target="_blank">Google Drive Portfolio ↗</a></span>
+      </div>
+      <div class="contact-item">
+        <span class="ci-label">Available</span>
+        <span class="ci-val">Full-time · Freelance · On-site or Remote</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+      <a href="mailto:pritamdas743373@gmail.com" class="btn-primary" style="flex:1;text-align:center;">Send Email</a>
+      <a href="https://drive.google.com/drive/folders/1OTuTuoeXY2HCXnUUQMVd9dGZptFUZxlm" target="_blank" class="btn-ghost" style="flex:1;text-align:center;">View Portfolio</a>
+    </div>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span class="footer-copy">© 2025 Pritam Das — All Rights Reserved</span>
+  <span class="footer-role">Video Editor · Cinematographer · Live Stream Operator</span>
+</div>
+
+</body>
+</html>
